@@ -18,8 +18,7 @@ async function getShowsByTerm(term) {
   const response = await axios.get(`${BASE_TVMAZE_URL}search/shows`, {
     params: { q: term },
   });
-  console.log("term =", term);
-  console.log("response.data =", response.data);
+  
   return response.data;
 }
 
@@ -30,10 +29,14 @@ async function getShowsByTerm(term) {
 
 async function displayShows(shows) {
   $showsList.empty();
+
   for (const show of shows) {
-    //   console.log("show", show);
-    //   console.log("showID =", show.show.id);
-    const imageURL = await getImage(show.show.id);
+    
+    let imageURL = show.show.image.medium;
+
+    if(show.show.image.medium === null){
+      imageURL = "https://tinyurl.com/tv-missing"
+    } 
 
     const $show = $(`
         <div data-show-id="${show.show.id}" class="Show col-md-12 col-lg-6 mb-4">
@@ -54,21 +57,6 @@ async function displayShows(shows) {
       `);
 
     $showsList.append($show);
-  }
-}
-
-async function getImage(showID) {
-  console.log("showID=", showID);
-  const showsImages = await axios.get(
-    `${BASE_TVMAZE_URL}shows/${showID}/images`
-  );
-  console.log("showsImages =", showsImages);
-  const showsImagesURL = showsImages.data[0].resolutions.medium.url;
-  console.log(showsImagesURL);
-  if (showsImagesURL === undefined || showsImagesURL === null) {
-    return "https://tinyurl.com/tv-missing";
-  } else {
-    return showsImagesURL;
   }
 }
 

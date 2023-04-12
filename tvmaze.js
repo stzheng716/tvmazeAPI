@@ -18,7 +18,7 @@ async function getShowsByTerm(term) {
   const response = await axios.get(`${BASE_TVMAZE_URL}search/shows`, {
     params: { q: term },
   });
-  
+
   return response.data;
 }
 
@@ -31,12 +31,13 @@ async function displayShows(shows) {
   $showsList.empty();
 
   for (const show of shows) {
-    
-    let imageURL = show.show.image.medium;
+    let imageURL = show.show.image;
 
-    if(show.show.image.medium === null){
-      imageURL = "https://tinyurl.com/tv-missing"
-    } 
+    if (imageURL === null) {
+      imageURL = "https://tinyurl.com/tv-missing";
+    } else {
+      imageURL = show.show.image.medium;
+    }
 
     const $show = $(`
         <div data-show-id="${show.show.id}" class="Show col-md-12 col-lg-6 mb-4">

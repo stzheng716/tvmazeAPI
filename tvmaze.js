@@ -15,10 +15,13 @@ const BASE_TVMAZE_URL = "https://api.tvmaze.com/";
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
 
-  const reponse = await axios.get(`${BASE_TVMAZE_URL}shows`, { params: { q: term } });
-  return reponse.data;
+  const response = await axios.get(`${BASE_TVMAZE_URL}search/shows`, {
+    params: { q: term },
+  });
+  console.log("term =", term);
+  console.log("response.data =", response.data);
+  return response.data;
 }
-
 
 /** Given list of shows, create markup for each and append to DOM.
  *
@@ -27,22 +30,21 @@ async function getShowsByTerm(term) {
 
 async function displayShows(shows) {
   $showsList.empty();
-
-
   for (const show of shows) {
-    
-    const imageURL = await getImage(show.id)
+    //   console.log("show", show);
+    //   console.log("showID =", show.show.id);
+    const imageURL = await getImage(show.show.id);
 
     const $show = $(`
-        <div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
+        <div data-show-id="${show.show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
               src="${imageURL}"
               alt="Bletchly Circle San Francisco"
               class="w-25 me-3">
            <div class="media-body">
-             <h5 class="text-primary">${show.name}</h5>
-             <div><small>${show.summary}</small></div>
+             <h5 class="text-primary">${show.show.name}</h5>
+             <div><small>${show.show.summary}</small></div>
              <button class="btn btn-outline-light btn-sm Show-getEpisodes">
                Episodes
              </button>
@@ -55,16 +57,19 @@ async function displayShows(shows) {
   }
 }
 
-async function getImage(showID){
-  const showsImages =  await axios.get(`${BASE_TVMAZE_URL}shows/${showID}/images`);
+async function getImage(showID) {
+  console.log("showID=", showID);
+  const showsImages = await axios.get(
+    `${BASE_TVMAZE_URL}shows/${showID}/images`
+  );
+  console.log("showsImages =", showsImages);
   const showsImagesURL = showsImages.data[0].resolutions.medium.url;
-  console.log(showsImagesURL)
-  if(showsImagesURL === undefined || showsImagesURL === null){
+  console.log(showsImagesURL);
+  if (showsImagesURL === undefined || showsImagesURL === null) {
     return "https://tinyurl.com/tv-missing";
   } else {
     return showsImagesURL;
   }
-
 }
 
 /** Handle search form submission: get shows from API and display.

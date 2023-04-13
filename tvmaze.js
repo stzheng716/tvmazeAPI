@@ -44,25 +44,25 @@ async function displayShows(shows) {
 
   for (const show of shows) {
     //TODO: rename variable name
-    let imageURL = show.show.image;
+    let imageURL = show.image;
 
     //TODO: update to falsy value
-    if (imageURL === null) {
+    if (!imageURL) {
       imageURL = "https://tinyurl.com/tv-missing";
     } else {
-      imageURL = show.show.image.medium;
+      imageURL = show.image.medium;
     }
 
     const $show = $(`
-        <div data-show-id="${show.show.id}" class="Show col-md-12 col-lg-6 mb-4">
+        <div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
               src="${imageURL}"
               alt="Bletchly Circle San Francisco"
               class="w-25 me-3">
            <div class="media-body">
-             <h5 class="text-primary">${show.show.name}</h5>
-             <div><small>${show.show.summary}</small></div>
+             <h5 class="text-primary">${show.name}</h5>
+             <div><small>${show.summary}</small></div>
              <button class="btn btn-outline-light btn-sm Show-getEpisodes">
                Episodes
              </button>
@@ -83,6 +83,9 @@ async function searchShowsAndDisplay() {
   const term = $("#searchForm-term").val();
   const shows = await getShowsByTerm(term);
 
+  let episodes = await getEpisodesOfShow(shows[0].id)
+  displayEpisodes(episodes)
+
   $episodesArea.hide();
   displayShows(shows);
 }
@@ -96,10 +99,28 @@ $searchForm.on("submit", async function handleSearchForm(evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
+async function getEpisodesOfShow(id) {
+  const episodes = await axios.get(`${BASE_TVMAZE_URL}shows/${id}/episodes`)
+  let filterEpisodes = episodes.data.map(function (obj) {
+    return {
+      "id": obj.id,
+      "name": obj.name,
+      "season": obj.season,
+      "number": obj.number,
+    }
+  })
+
+  return filterEpisodes
+}
 
 /** Write a clear docstring for this function... */
 
-// function displayEpisodes(episodes) { }
+function displayEpisodes(episodes) {
+  for (let episode of episodes) {
+    let episodeLI = $("<li>").text(`${episode.name} (season ${episode.season}, 
+    number ${episode.number})`)
+    $("#episodesList").append(episodeLI)
+  }
+}
 
 // add other functions that will be useful / match our structure & design

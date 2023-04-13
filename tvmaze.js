@@ -83,11 +83,10 @@ async function searchShowsAndDisplay() {
   const term = $("#searchForm-term").val();
   const shows = await getShowsByTerm(term);
 
-  let episodes = await getEpisodesOfShow(shows[0].id);
-  displayEpisodes(episodes);
-
   $episodesArea.hide();
   displayShows(shows);
+
+  $(".Show-getEpisodes").on("click", getEpisodesAndDisplay)
 }
 
 $searchForm.on("submit", async function handleSearchForm(evt) {
@@ -116,7 +115,6 @@ async function getEpisodesOfShow(id) {
 /** Write a clear docstring for this function... */
 
 function displayEpisodes(episodes) {
-  $("#episodesArea").attr("style", "display: inline"); //TODO: fix display
   for (let episode of episodes) {
     let episodeLI = $("<li>").text(`${episode.name} (season ${episode.season},
     number ${episode.number})`);
@@ -124,9 +122,11 @@ function displayEpisodes(episodes) {
   }
 }
 
-async function getEpisodesAndDisplay(showId) {
-  let episodes = await getEpisodesOfShow(showId);
-  displayEpisodes(episodes);
+async function getEpisodesAndDisplay(evt) {
+  console.log(evt)
+  // let episodes = await getEpisodesOfShow(showId);
+  // displayEpisodes(episodes);
+  // $episodesArea.show()
 }
 
 // add other functions that will be useful / match our structure & design

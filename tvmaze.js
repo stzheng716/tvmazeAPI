@@ -83,8 +83,8 @@ async function searchShowsAndDisplay() {
   const term = $("#searchForm-term").val();
   const shows = await getShowsByTerm(term);
 
-  let episodes = await getEpisodesOfShow(shows[0].id)
-  displayEpisodes(episodes)
+  let episodes = await getEpisodesOfShow(shows[0].id);
+  displayEpisodes(episodes);
 
   $episodesArea.hide();
   displayShows(shows);
@@ -100,27 +100,33 @@ $searchForm.on("submit", async function handleSearchForm(evt) {
  */
 
 async function getEpisodesOfShow(id) {
-  const episodes = await axios.get(`${BASE_TVMAZE_URL}shows/${id}/episodes`)
+  const episodes = await axios.get(`${BASE_TVMAZE_URL}shows/${id}/episodes`);
   let filterEpisodes = episodes.data.map(function (obj) {
     return {
-      "id": obj.id,
-      "name": obj.name,
-      "season": obj.season,
-      "number": obj.number,
-    }
-  })
+      id: obj.id,
+      name: obj.name,
+      season: obj.season,
+      number: obj.number,
+    };
+  });
 
-  return filterEpisodes
+  return filterEpisodes;
 }
 
 /** Write a clear docstring for this function... */
 
 function displayEpisodes(episodes) {
+  $("#episodesArea").attr("style", "display: inline"); //TODO: fix display
   for (let episode of episodes) {
-    let episodeLI = $("<li>").text(`${episode.name} (season ${episode.season}, 
-    number ${episode.number})`)
-    $("#episodesList").append(episodeLI)
+    let episodeLI = $("<li>").text(`${episode.name} (season ${episode.season},
+    number ${episode.number})`);
+    $("#episodesList").append(episodeLI);
   }
+}
+
+async function getEpisodesAndDisplay(showId) {
+  let episodes = await getEpisodesOfShow(showId);
+  displayEpisodes(episodes);
 }
 
 // add other functions that will be useful / match our structure & design

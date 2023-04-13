@@ -2,6 +2,7 @@
 
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
+const $episodesList = $("#episodesList");
 const $searchForm = $("#searchForm");
 const BASE_TVMAZE_URL = "https://api.tvmaze.com/";
 
@@ -112,21 +113,29 @@ async function getEpisodesOfShow(id) {
   return filterEpisodes;
 }
 
-/** Write a clear docstring for this function... */
+/**displayEpisodes: takes in an array of eposides makes a LI of each and 
+ * appends to the UL of the DOM */
 
 function displayEpisodes(episodes) {
   for (let episode of episodes) {
     let episodeLI = $("<li>").text(`${episode.name} (season ${episode.season},
-    number ${episode.number})`);
+      number ${episode.number})`);
     $("#episodesList").append(episodeLI);
   }
 }
 
+/**getEpisodesAndDisplay: clears the episodesList and display it and takes an 
+ * event target to locate the show-id and invokes displayEpisodes with show id */
+
 async function getEpisodesAndDisplay(evt) {
-  console.log(evt)
-  // let episodes = await getEpisodesOfShow(showId);
-  // displayEpisodes(episodes);
-  // $episodesArea.show()
+  $episodesList.empty()
+  $episodesArea.show()
+
+  const parentIdEl = $(".Show")
+  const showId = $(evt.target).closest(parentIdEl).data("show-id")
+  const episodes = await getEpisodesOfShow(showId);
+
+  displayEpisodes(episodes);
 }
 
 // add other functions that will be useful / match our structure & design

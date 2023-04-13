@@ -12,14 +12,25 @@ const BASE_TVMAZE_URL = "https://api.tvmaze.com/";
  *    (if no image URL given by API, put in a default image URL)
  */
 
+//TODO: refactor to follow object format defined in docstring (map)
 async function getShowsByTerm(term) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
 
+  //FIXED: style- params each line
   const response = await axios.get(`${BASE_TVMAZE_URL}search/shows`, {
     params: { q: term },
   });
 
-  return response.data;
+  const filteredResponse = response.data.map(function (obj) {
+    return {
+      id: obj.show.id,
+      name: obj.show.name,
+      summary: obj.show.summary,
+      image: obj.show.image,
+    };
+  });
+
+  return filteredResponse;
 }
 
 /** Given list of shows, create markup for each and append to DOM.
@@ -27,12 +38,15 @@ async function getShowsByTerm(term) {
  * A show is {id, name, summary, image}
  * */
 
+//TODO: refactor with updated show
 async function displayShows(shows) {
   $showsList.empty();
 
   for (const show of shows) {
+    //TODO: rename variable name
     let imageURL = show.show.image;
 
+    //TODO: update to falsy value
     if (imageURL === null) {
       imageURL = "https://tinyurl.com/tv-missing";
     } else {
